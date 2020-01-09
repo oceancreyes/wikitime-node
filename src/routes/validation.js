@@ -7,9 +7,10 @@ module.exports = {
         .optional()
         .isLength({ min: 4 });
 
-      req.checkBody("email", "must be a valid email")
-      .optional()
-      .isEmail();
+      req
+        .checkBody("email", "must be a valid email")
+        .optional()
+        .isEmail();
       req
         .checkBody("password", "must be at least 6 characters in length")
         .isLength({ min: 6 });
@@ -20,7 +21,7 @@ module.exports = {
     }
     const errors = req.validationErrors();
     if (errors) {
-         req.flash("error", errors);
+      req.flash("error", errors);
       return res.redirect(req.headers.referer);
     } else {
       return next();

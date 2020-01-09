@@ -1,0 +1,65 @@
+let wikiQueries = require("../db/queries.wikis.js");
+
+module.exports = {
+  index(req, res, next) {
+    wikiQueries.getAllWikis((err, wikis) => {
+      if (err) {
+        res.redirect(500, "static/index");
+      } else {
+        res.render("wikis/index", { wikis });
+      }
+    });
+  },
+  show(req, res, next) {
+    wikiQueries.getSpecificWiki(req.params.id, (err, wiki) => {
+      if (err || wiki == null) {
+        res.redirect(404, "/");
+      } else {
+        res.render("wikis/show", { wiki });
+      }
+    });
+  },
+  new(req, res, next) {
+    if (req.user) {
+      res.render("wikis/new");
+    } else {
+      req.flash("notice", "You are not authorized to do that.");
+      res.redirect("/wikis");
+    }
+  },
+  edit(req, res, next) {
+    wikiQueries.getSpecificWiki(req.params.id, (err, wiki) => {
+      if (err || wiki == null) {
+        res.redirect(404, "/");
+      } else {
+        if (req.user) {
+          res.render("wikis/edit", { wiki });
+        } else {
+          req.flash("You are not authorized to do that.");
+          res.redirect(`/wikis/${req.params.id}`);
+        }
+      }
+    });
+  },
+  create(req, res, next) {
+    if (req.user) {
+      let newWiki = {
+        title: req.body.title,
+        body: req.body.body,
+        userId: req.user.id
+      };
+      wikiQueries.addWiki(newWiki, (err, wiki) => {
+        if (err) {
+          res.redirect(500, "wiki/new");
+        } else {
+          res.redirect(303, `/wikis/${wiki.id}`);
+        }
+      });
+    } else {
+      req.flash("notice", "You are not authorized to do that.");
+      res.redirect("/wikis");
+    }
+  },
+  update(req, res, next) {},
+  destroy(req, res, next) {}
+};
