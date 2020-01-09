@@ -13,7 +13,6 @@ module.exports = {
           usernameField: "username"
         },
         (username, password, done) => {
-          console.log(done);
           User.findOne({
             where: { username }
           }).then(user => {

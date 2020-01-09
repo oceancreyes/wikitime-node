@@ -20,7 +20,7 @@ describe("routes : wikis", () => {
           request.get({
             url: "http://localhost:3000/auth/fake",
             form: {
-              id: user.id,
+              userId: user.id,
               username: user.name,
               email: user.email
             }
@@ -61,7 +61,7 @@ describe("routes : wikis", () => {
     it("should render a view with a new wiki form", done => {
       request.get(`${base}new`, (err, res, body) => {
         expect(err).toBeNull();
-        expect(body).toContain("JavaScript");
+        expect(body).toContain("New Wiki");
         done();
       });
     });
@@ -128,7 +128,7 @@ describe("routes : wikis", () => {
       request.get(`${base}${this.wiki.id}/edit`, (err, res, body) => {
         expect(err).toBeNull();
         expect(body).toContain("Edit Wiki");
-        expect(body).toContain("JS frameworks");
+        expect(body).toContain("JS frameworks and fundamentals");
         done();
       });
     });

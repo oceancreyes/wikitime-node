@@ -60,6 +60,22 @@ module.exports = {
       res.redirect("/wikis");
     }
   },
-  update(req, res, next) {},
-  destroy(req, res, next) {}
+  update(req, res, next) {
+    wikiQueries.updateWiki(req, req.body, (err, wiki) => {
+      if(err || wiki == null){
+        res.redirect(401, `/wikis/${req.params.id}/edit`)
+      } else{
+        res.redirect(`/wikis/${req.params.id}`)
+      }
+    })
+  },
+  destroy(req, res, next) {
+    wikiQueries.deleteWiki(req, (err, wiki) => {
+      if (err) {
+        res.redirect(err, `/wikis/${req.params.id}`);
+      } else {
+        res.redirect(303, "/wikis");
+      }
+    });
+  }
 };
