@@ -63,21 +63,31 @@ describe("routes : users", () => {
       let options = {
         url: base,
         form: {
-        username: "john100",
-        email: "john1000@gmail.com",
-        password: "friedChicken"
+          username: "john100",
+          email: "john1000@gmail.com",
+          password: "friedChicken"
         }
-      }
+      };
       request.post(options, (err, res, body) => {
-        User.findOne({where: {email: "john1000@gmail.com"}}).then(user => {
-          expect(user).toBeNull()
-          done();
+        User.findOne({ where: { email: "john1000@gmail.com" } })
+          .then(user => {
+            expect(user).toBeNull();
+            done();
           })
           .catch(err => {
             console.log(err);
             done();
-                });
-                })
-  })
-})
+          });
+      });
+    });
+  });
+  describe("GET /users/sign_in", () => {
+    it("should render a view with a sign in form", done => {
+      request.get(`${base}sign_in`, (err, res, body) => {
+        expect(err).toBeNull();
+        expect(body).toContain("Sign in");
+        done();
+      });
+    });
+  });
 });
