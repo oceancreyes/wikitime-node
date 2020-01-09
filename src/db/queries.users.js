@@ -13,15 +13,13 @@ module.exports = {
       password: hashedPassword
     })
       .then(user => {
-        console.log(user.username);
-        const msg = {
-          to: newUser.email,
-          from: "welcome@wikitime.com",
-          subject: "Welcome to WikiTime",
-          text: `We're happy you signed up! Start posting!`,
-          html: "<strong>Welcome to WikiTime!</strong>"
-        };
-        sgMail.send(msg);
+        // const msg = {
+        //   to: newUser.email,
+        //   from: "welcome@wikitime.com",
+        //   subject: "Welcome to WikiTime",
+        //   html: "<strong>Welcome to WikiTime! Start posting about what's important to you!</strong>"
+        // };
+        // sgMail.send(msg);
         callback(null, user);
       })
       .catch(err => {

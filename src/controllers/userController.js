@@ -11,15 +11,12 @@ module.exports = {
       password: req.body.password,
       passwordConfirmation: req.body.password_conf
     };
-
     userQueries.createUser(newUser, function(err, user) {
       if (err) {
-        console.log("mannnnnnnnnn");
         // req.flash("error", err)
         res.redirect("/users/sign_up");
       } else {
-        console.log("fsaafasfsa");
-        res.redirect("localhost:3000/");
+        res.redirect("/");
       }
     });
   }
