@@ -1,44 +1,21 @@
 const request = require("request");
 const server = require("../../src/server");
-const base = "http://localhost:3000/wikis/";
-const sequelize = require("../../src/db/models/index").sequelize;
-const Wiki = require("../../src/db/models").Wiki;
+const base = "http://localhost:3000/users/";
 const User = require("../../src/db/models").User;
+const sequelize = require("../../src/db/models/index").sequelize;
 
-describe("routes : wikis", () => {
+describe("routes : users", () => {
   beforeEach(done => {
     this.user;
-    this.wiki;
-    sequelize.sync({ force: true }).then(res => {
+
+    sequelize.sync({ force: true }).then(() => {
       User.create({
-        username: "tommychocolate",
-        email: "chocolatetom@gmail.com",
-        password: "123456789"
+        username: "john100",
+        email: "john100@gmail.com",
+        password: "friedChicken"
       })
         .then(user => {
-          this.user = user;
-          request.get({
-            url: "http://localhost:3000/auth/fake",
-            form: {
-              id: user.id,
-              username: user.name,
-              email: user.email
-            }
-          });
-          Wiki.create({
-            title: "JavaScript",
-            body: "JS frameworks and fundamentals",
-            userId: user.id,
-            private: false
-          })
-            .then(wiki => {
-              this.wiki = wiki;
-              done();
-            })
-            .catch(err => {
-              console.log(err);
-              done();
-            });
+          done();
         })
         .catch(err => {
           console.log(err);
@@ -47,41 +24,54 @@ describe("routes : wikis", () => {
     });
   });
 
-  describe("GET /wikis", () => {
-    it("should render the wiki index page", done => {
-      request.get(base, (err, res, body) => {
+  describe("GET /users/sign_up", () => {
+    it("should render a view with a sign up form", done => {
+      request.get(`${base}sign_up`, (err, res, body) => {
         expect(err).toBeNull();
-        expect(body).toContain("Wikis");
+        expect(body).toContain("Create your WikiTime account");
         done();
       });
     });
   });
 
-  describe("GET /wikis/new", () => {
-    it("should render a view with a new wiki form", done => {
-      request.get(`${base}new`, (err, res, body) => {
-        expect(err).toBeNull();
-        expect(body).toContain("JavaScript");
-        done();
-      });
-    });
-  });
-
-  describe("POST /wikis/create", () => {
-    it("should create a new wiki and redirect", done => {
+  describe("POST /users", () => {
+    it("should create a new user with valid values and redirect", done => {
       const options = {
-        url: `${base}create`,
+        url: base,
         form: {
-          title: "New wiki",
-          body: "New wiki body",
-          userId: this.user.id
+          username: "examplejr",
+          email: "user@example.com",
+          password: "123456789",
+          password_conf: "123456789"
+        }
+      };
+
+      request.post(options, (err, res, body) => {
+        User.findOne({ where: { email: "user@example.com" } })
+          .then(user => {
+            expect(user).not.toBeNull();
+            expect(user.email).toBe("user@example.com");
+            expect(user.id).toBe(2);
+            done();
+          })
+          .catch(err => {
+            done();
+          });
+      });
+    });
+    it("should not create a duplicate username", done => {
+      let options = {
+        url: base,
+        form: {
+          username: "john100",
+          email: "john1000@gmail.com",
+          password: "friedChicken"
         }
       };
       request.post(options, (err, res, body) => {
-        Wiki.findOne({ where: { title: "New wiki" } })
-          .then(wiki => {
-            expect(wiki.title).toBe("New wiki");
-            expect(wiki.body).toBe("New wiki body");
+        User.findOne({ where: { email: "john1000@gmail.com" } })
+          .then(user => {
+            expect(user).toBeNull();
             done();
           })
           .catch(err => {
@@ -91,75 +81,13 @@ describe("routes : wikis", () => {
       });
     });
   });
-
-  describe("GET /wikis/:id", () => {
-    it("should render a view with the selected wiki", done => {
-      request.get(`${base}${this.wiki.id}`, (err, res, body) => {
+  describe("GET /users/sign_in", () => {
+    it("should render a view with a sign in form", done => {
+      request.get(`${base}sign_in`, (err, res, body) => {
         expect(err).toBeNull();
-        expect(body).toContain("JS frameworks");
+        expect(body).toContain("Sign in");
         done();
       });
-    });
-  });
-
-  describe("POST /wikis/:id/destroy", () => {
-    it("should delete the wiki with the associated ID", done => {
-      Wiki.findAll().then(wikis => {
-        const wikiCountBeforeDelete = wikis.length;
-        expect(wikiCountBeforeDelete).toBe(1);
-        request.post(`${base}${this.wiki.id}/destroy`, (err, res, body) => {
-          Wiki.findAll()
-            .then(wikis => {
-              expect(err).toBeNull();
-              expect(wikis.length).toBe(wikiCountBeforeDelete - 1);
-              done();
-            })
-            .catch(err => {
-              console.log(err);
-              done();
-            });
-        });
-      });
-    });
-  });
-
-  describe("GET /wikis/:id/edit", () => {
-    it("should render a view with an edit wiki form", done => {
-      request.get(`${base}${this.wiki.id}/edit`, (err, res, body) => {
-        expect(err).toBeNull();
-        expect(body).toContain("Edit Wiki");
-        expect(body).toContain("JS frameworks");
-        done();
-      });
-    });
-  });
-
-  describe("POST /wikis/:id/update", () => {
-    it("should update the wiki with the given values", done => {
-      request.post(
-        {
-          url: `${base}${this.wiki.id}/update`,
-          form: {
-            title: "JavaScript Frameworks",
-            body: "There are a lot of them",
-            userId: this.user.id
-          }
-        },
-        (err, res, body) => {
-          expect(err).toBeNull();
-          Wiki.findOne({
-            where: { id: 1 }
-          })
-            .then(wiki => {
-              expect(wiki.title).toBe("JavaScript Frameworks");
-              done();
-            })
-            .catch(err => {
-              console.log(err);
-              done();
-            });
-        }
-      );
     });
   });
 });

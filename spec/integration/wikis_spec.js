@@ -21,7 +21,7 @@ describe("routes : wikis", () => {
             url: "http://localhost:3000/auth/fake",
             form: {
               userId: user.id,
-              username: user.name,
+              username: user.username,
               email: user.email
             }
           });
@@ -72,16 +72,16 @@ describe("routes : wikis", () => {
       const options = {
         url: `${base}create`,
         form: {
-          title: "New wiki",
-          body: "New wiki body",
+          title: "Brand new wiki",
+          body: "New wiki body!",
           userId: this.user.id
         }
       };
       request.post(options, (err, res, body) => {
-        Wiki.findOne({ where: { title: "New wiki" } })
+        Wiki.findOne({ where: { title: "Brand new wiki" } })
           .then(wiki => {
-            expect(wiki.title).toBe("New wiki");
-            expect(wiki.body).toBe("New wiki body");
+            expect(wiki.title).toBe("Brand new wiki");
+            expect(wiki.body).toBe("New wiki body!");
             done();
           })
           .catch(err => {
@@ -90,6 +90,27 @@ describe("routes : wikis", () => {
           });
       });
     });
+    it("should not make a new wiki with nonvalidated data", done => {
+      const options = {
+        url: `${base}create`,
+        form: {
+          title: "1",
+          body: "1",
+          userId: this.user.id
+        }
+      };
+      request.post(options, (err, res, body) => {
+        Wiki.findOne({ where: { title: "1" } })
+          .then(wiki => {
+            expect(wiki).toBeNull()
+            done();
+          })
+          .catch(err => {
+            console.log(err);
+            done();
+          });
+      });
+    })
   });
 
   describe("GET /wikis/:id", () => {
@@ -161,5 +182,48 @@ describe("routes : wikis", () => {
         }
       );
     });
+    it("should not update a wiki with insufficient data", done => {
+      const options = {
+        url: `${base}${this.wiki.id}/update`,
+        form: {
+          title: "2",
+          body: "2"
+        }
+      };
+      request.post(options, (err, res, body) => {
+        Wiki.findOne({
+          where: { body: "2" }
+        }).then(wiki => {
+          expect(wiki).toBeNull()
+          done();
+        });
+      });
+    })
+    it("should update another user's wiki", done => {
+      User.create({
+        email: "fellowuser@gmail.com",
+        username: "fellowuser",
+        password: "jsafkhasfjlsa"
+      }).then(user => {
+        let fellowOption = {
+          url: `${base}${this.wiki.id}/update`,
+          form: {
+            title: "I was updated",
+            body: "UPDATED BODY!!!!!",
+            userId: this.user.id
+          }
+        }
+        request.post(fellowOption, (err, res, body) => {
+          Wiki.findOne({where: {title: "I was updated"}}).then(wiki => {
+            expect(wiki.title).toBe("I was updated")
+            expect(wiki.body).toBe("UPDATED BODY!!!!!")
+            done()
+          }).catch(err => {
+            console.log(err)
+            done()
+          })
+        })
+      })
+    })
   });
 });
