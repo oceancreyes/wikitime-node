@@ -8,16 +8,18 @@
 
 <body>
     <%- include ('../static/partials/navbar.ejs')  %>
-    <main class="container">
+    <main class="container" style="margin-top: 70px;">
+      
         <%- include ('../static/partials/messages.ejs') %>
         <% if(currentUser && currentUser.role == 0) { %>
+          <h1>Upgrade your WikiTime account!</h1>
           <h2>Become a premium member for only $15:</h2>
             <ul>
               <li>Create private wikis!</li>
               <li>Collaborate on private wikis with other members!</li>
             </ul>
             <form action="/users/<%=currentUser.id%>/upgrade" method="POST">
-              <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="<%=publishableKey%>" data-amount="1500" data-name="Demo Site" data-description="WikiTime Premium Membership" data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+              <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key='pk_test_7RZjqkFhQdcdESPTEAfxDndj00Rn60Zmrd' data-amount="1500" data-name="Demo Site" data-description="WikiTime Premium Membership" data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
                 data-locale="auto">
               </script>
             </form>

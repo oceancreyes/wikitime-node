@@ -3,7 +3,7 @@ module.exports = {
     let role, id, username, email;
 
     function middleware(req, res, next) {
-      //   role = req.body.role || role;
+      role = req.body.role || role;
       id = req.body.userId || id;
       username = req.body.username || username;
       email = req.body.email || email;
@@ -12,14 +12,13 @@ module.exports = {
         req.user = {
           id: id,
           username: username,
-          email: email
-          //      role: role
-        };
+          email: email,
+          role: role
+                };
       } else if (id == 0) {
         delete req.user;
       }
       if (next) {
-        
         next();
       }
     }
@@ -28,6 +27,7 @@ module.exports = {
       res.redirect("/");
     }
     app.use(middleware);
+
     //route is just set as a function just like userController.FUNCTIONNAME or others!
     app.get("/auth/fake", route);
   }

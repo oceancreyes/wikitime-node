@@ -8,14 +8,26 @@ describe("routes : users", () => {
   beforeEach(done => {
     this.user;
 
-    sequelize.sync({ force: true }).then(() => {
+    sequelize.sync({ force: true }).then(res => {
       User.create({
         username: "john100",
         email: "john100@gmail.com",
         password: "friedChicken"
       })
         .then(user => {
-          done();
+          this.user = user;
+          request.get({
+            url: "http://localhost:3000/auth/fake",
+            form: {
+              userId: user.id,
+              username: user.username,
+              email: user.email,
+              role: user.role
+            }
+          }
+          );
+          done()
+
         })
         .catch(err => {
           console.log(err);
@@ -111,11 +123,30 @@ describe("routes : users", () => {
       });
     });
   });
-  describe("GET /users/upgrade", () => {
-    it("should render an upgrade account page", done => {
+  fdescribe("GET /users/upgrade", () => {
+    fit("should render an upgrade account page", done => {
       request.get(`${base}upgrade`, (err, res, body) => {
-        expect(body).toContain("Upgrade your WikiTime account!")
+        expect(err).toBeNull();
+        expect(body).toContain("WikiTime Premium Membership");
         done();
+      })
+    })
+  })
+ describe("POST /users/upgrade", () => {
+    it("should update the user's role from 0 to 1 (standard to premium)", done => {
+      const options = {
+        url: `${base}${this.user.id}/upgrade`,
+        form: {
+          stripeEmail: this.user.email,
+          stripeToken: "tok_amex"	
+        }
+      }
+      request.post(options, (err, res, body) => {
+        User.findByPk(this.user.id).then(user => {
+          expect(user.email).toBe(this.user.email)
+          expect(user.role).toBe(1)
+          done()
+        })
       })
     })
   })

@@ -1,7 +1,9 @@
 const userQueries = require("../db/queries.users.js");
 const passport = require("passport");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-let publishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
+//let publishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
+let Authorizer = require("../policies/appPolicies.js");
+
 
 module.exports = {
   signUp(req, res, next) {
@@ -27,7 +29,14 @@ module.exports = {
     });
   },
   signInForm(req, res, next) {
-    res.render("users/signin");
+    let authorized = new Authorizer(req.user).show();
+if(authorized){
+  res.render("users/signin");
+
+}  else {
+  req.flash("notice", "You are not authorized to do that.");
+  res.redirect("/");
+}
   },
   signIn(req, res, next) {
     passport.authenticate("local")(
@@ -51,7 +60,7 @@ module.exports = {
     res.redirect("/");
   },
   upgradeForm(req, res, next) {
-    res.render("users/upgrade", {publishableKey});
+    res.render("users/upgrade");
   },
   upgrade(req, res, next) {
     let payment = 1500;
@@ -68,6 +77,7 @@ module.exports = {
             currency: "usd",
             customer: customer.id
           })
+          
           .then(charge => {
             userQueries.upgradeAccount(req.user.id, (err, user) => {
               if(user){
@@ -77,12 +87,13 @@ module.exports = {
               req.flash("notice", "Payment failed. Try again.");
               res.redirect("/users/upgrade");
             }
-            });
+            })
           })
           .catch(err => {
             console.log(err)
           });
       });
+
   },
   downgrade(req, res, next){
     userQueries.downgradeAccount(req.user.id, (err, success) => {

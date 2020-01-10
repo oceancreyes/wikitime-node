@@ -90,7 +90,7 @@ describe("routes : wikis", () => {
           });
       });
     });
-    it("should not make a new wiki with nonvalidated data", done => {
+    it("should not make a new wiki with nonvalid data", done => {
       const options = {
         url: `${base}create`,
         form: {
