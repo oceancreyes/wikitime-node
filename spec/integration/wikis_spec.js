@@ -117,7 +117,7 @@ describe("routes : wikis", () => {
     it("should render a view with the selected wiki", done => {
       request.get(`${base}${this.wiki.id}`, (err, res, body) => {
         expect(err).toBeNull();
-        expect(body).toContain("JS frameworks");
+        expect(body).toContain("JS frameworks and fundamentals");
         done();
       });
     });

@@ -59,6 +59,27 @@ describe("routes : users", () => {
           });
       });
     });
+    it("should not make a new user with insufficient information", done => {
+      const options = {
+        url: base,
+        form: {
+          username: "",
+          email: "user2@example.com",
+          password: "123456789",
+          password_conf: "123456789"
+        }
+      };
+      request.post(options, (err, res, body) => {
+        User.findOne({ where: { email: "user2@example.com" } })
+          .then(user => {
+            expect(user).toBeNull()
+            done();
+          })
+          .catch(err => {
+            done();
+          });
+      });
+    })
     it("should not create a duplicate username", done => {
       let options = {
         url: base,
@@ -90,4 +111,12 @@ describe("routes : users", () => {
       });
     });
   });
+  describe("GET /users/upgrade", () => {
+    it("should render an upgrade account page", done => {
+      request.get(`${base}upgrade`, (err, res, body) => {
+        expect(body).toContain("Upgrade your WikiTime account!")
+        done();
+      })
+    })
+  })
 });

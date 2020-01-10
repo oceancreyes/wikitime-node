@@ -1,5 +1,7 @@
 const userQueries = require("../db/queries.users.js");
 const passport = require("passport");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+let publishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
 
 module.exports = {
   signUp(req, res, next) {
@@ -47,5 +49,50 @@ module.exports = {
     req.logout();
     req.flash("notice", "You've successfully signed out!");
     res.redirect("/");
+  },
+  upgradeForm(req, res, next) {
+    res.render("users/upgrade", {publishableKey});
+  },
+  upgrade(req, res, next) {
+    let payment = 1500;
+    stripe.customers
+      .create({
+        email: req.body.stripeEmail,
+        source: req.body.stripeToken
+            })
+      .then(customer => {
+        stripe.charges
+          .create({
+           amount: payment,
+            description: "WikiTime Charge",
+            currency: "usd",
+            customer: customer.id
+          })
+          .then(charge => {
+            userQueries.upgradeAccount(req.user.id, (err, user) => {
+              if(user){
+                req.flash("notice", "Your account is now Premium!");
+                res.redirect("/");
+              } else {
+              req.flash("notice", "Payment failed. Try again.");
+              res.redirect("/users/upgrade");
+            }
+            });
+          })
+          .catch(err => {
+            console.log(err)
+          });
+      });
+  },
+  downgrade(req, res, next){
+    userQueries.downgradeAccount(req.user.id, (err, success) => {
+      if(success){
+        req.flash("notice", "Your account has been downgraded from Premium!")
+        res.redirect("/");
+      } else{
+        req.flash("notice", "Error...couldn't downgrade at this time!")
+        res.redirect("/users/upgrade");
+      }
+    })
   }
 };

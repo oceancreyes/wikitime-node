@@ -25,5 +25,32 @@ module.exports = {
       .catch(err => {
         callback(err);
       });
+  },
+  upgradeAccount(id, callback){
+    User.findByPk(id).then(user => {
+      if(!user){
+        return callback("User not found.")
+      } else {
+         user.update({role: 1})
+         .then(() => {
+          callback(null, user)
+         })
+      }
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+  downgradeAccount(id, callback){
+    User.findByPk(id).then(user => {
+      if(!user){
+        return callback("User not found.")
+      } else {
+        user.update({role: 0}).then(() => {
+          callback(null, user)
+        })
+      }
+    }).catch(err => {
+      console.log(err)
+    })
   }
 };
