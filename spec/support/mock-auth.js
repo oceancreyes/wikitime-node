@@ -1,6 +1,6 @@
 module.exports = {
   fakeIt(app) {
-    let role, id, username, email;
+    var role, id, username, email;
 
     function middleware(req, res, next) {
       role = req.body.role || role;
@@ -14,7 +14,8 @@ module.exports = {
           username: username,
           email: email,
           role: role
-                };
+        };
+       // res.locals.currentUser = req.user
       } else if (id == 0) {
         delete req.user;
       }
@@ -27,8 +28,6 @@ module.exports = {
       res.redirect("/");
     }
     app.use(middleware);
-
-    //route is just set as a function just like userController.FUNCTIONNAME or others!
     app.get("/auth/fake", route);
   }
 };

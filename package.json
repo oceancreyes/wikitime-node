@@ -2,7 +2,7 @@
   "name": "wikitime",
   "version": "1.0.0",
   "description": "",
-  "main": "node src/server.js",
+  "main": "",
   "scripts": {
     "test": "set NODE_ENV=test&& jasmine",
     "start": "node src/server.js"

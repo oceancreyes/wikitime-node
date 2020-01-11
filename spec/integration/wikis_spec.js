@@ -17,28 +17,30 @@ describe("routes : wikis", () => {
       })
         .then(user => {
           this.user = user;
-          request.get({
-            url: "http://localhost:3000/auth/fake",
-            form: {
-              userId: user.id,
-              username: user.username,
-              email: user.email
-            }
-          });
           Wiki.create({
             title: "JavaScript",
             body: "JS frameworks and fundamentals",
-            userId: user.id,
+            userId: this.user.id,
             private: false
           })
             .then(wiki => {
-              this.wiki = wiki;
-              done();
-            })
-            .catch(err => {
-              console.log(err);
-              done();
-            });
+          this.wiki = wiki;
+          request.get({
+            url: "http://localhost:3000/auth/fake",
+            form: {
+              userId: this.user.id,
+              username:  this.user.username,
+              email:  this.user.email,
+              role:  this.user.role
+            }
+          }, (err, res, body) => {
+            done()
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          done();
+        });
         })
         .catch(err => {
           console.log(err);
@@ -52,6 +54,7 @@ describe("routes : wikis", () => {
       request.get(base, (err, res, body) => {
         expect(err).toBeNull();
         expect(body).toContain("Wikis");
+        expect(body).toContain("New Wiki")
         done();
       });
     });

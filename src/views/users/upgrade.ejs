@@ -7,11 +7,11 @@
 </head>
 
 <body>
-    <%- include ('../static/partials/navbar.ejs')  %>
     <main class="container" style="margin-top: 70px;">
-      
+      <%- include ('../static/partials/navbar.ejs')  %>
         <%- include ('../static/partials/messages.ejs') %>
-        <% if(currentUser && currentUser.role == 0) { %>
+
+        <% if(currentUser && (currentUser.role === 0)) { %>
           <h1>Upgrade your WikiTime account!</h1>
           <h2>Become a premium member for only $15:</h2>
             <ul>
@@ -23,8 +23,7 @@
                 data-locale="auto">
               </script>
             </form>
-            <% } %>
-              <% if(currentUser && currentUser.role == 1) { %>
+            <% } else if( currentUser && (currentUser.role === 1)) { %>
                 <h2>Are you sure you want to downgrade your account?? You're currently a Premium member.</h2>
                   <form action="/users/<%=currentUser.id%>/downgrade" method="POST">
                     <button type="submit" class="btn btn-danger">Downgrade my account</button>

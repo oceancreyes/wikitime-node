@@ -27,13 +27,15 @@ module.exports = {
       });
   },
   upgradeAccount(id, callback){
+    console.log(id)
     User.findByPk(id).then(user => {
+     console.log(user)
       if(!user){
         return callback("User not found.")
       } else {
          user.update({role: 1})
-         .then(() => {
-          callback(null, user)
+         .then(newUser => {
+          callback(null, newUser)
          })
       }
     }).catch(err => {

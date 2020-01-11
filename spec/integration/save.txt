@@ -1,0 +1,53 @@
+const request = require("request");
+const server = require("../../src/server");
+const base = "http://localhost:3000/users/";
+const User = require("../../src/db/models").User;
+const sequelize = require("../../src/db/models/index").sequelize;
+var userCrud;
+
+describe("routes : users", () => {
+  beforeEach(done => {
+    this.user;
+    sequelize.sync({ force: true }).then(res => {
+      User.create({
+        username: "john100",
+        email: "john100@gmail.com",
+        password: "friedChicken",
+        role: 0
+      })
+        .then(user => {
+          this.user = user;
+          done()
+    })
+    .catch(err => {
+      console.log(err)
+      done()
+    })
+  });
+});
+ 
+
+  
+ 
+  
+ fdescribe("POST /users/upgrade", () => {
+    fit("should update the user's role from 0 to 1 (standard to premium)", done => {
+      const options = {
+        url: `${base}${userCrud.id}/upgrade`,
+        form: {
+          stripeEmail: userCrud.email,
+          stripeToken: "tok_amex"	
+        }
+      }
+      request.post(options, (err, res, body) => {
+        User.findByPk(2).then(user => {
+          console.log(user)
+          expect(user.email).toBe(userCrud.email)
+          expect(userCrud.role).toBe(1)
+          done()
+        })
+      })
+    })
+  })
+});
+})
