@@ -24,23 +24,26 @@ describe("routes : wikis", () => {
             private: false
           })
             .then(wiki => {
-          this.wiki = wiki;
-          request.get({
-            url: "http://localhost:3000/auth/fake",
-            form: {
-              userId: this.user.id,
-              username:  this.user.username,
-              email:  this.user.email,
-              role:  this.user.role
-            }
-          }, (err, res, body) => {
-            done()
-          });
-        })
-        .catch(err => {
-          console.log(err);
-          done();
-        });
+              this.wiki = wiki;
+              request.get(
+                {
+                  url: "http://localhost:3000/auth/fake",
+                  form: {
+                    userId: this.user.id,
+                    username: this.user.username,
+                    email: this.user.email,
+                    role: this.user.role
+                  }
+                },
+                (err, res, body) => {
+                  done();
+                }
+              );
+            })
+            .catch(err => {
+              console.log(err);
+              done();
+            });
         })
         .catch(err => {
           console.log(err);
@@ -54,7 +57,7 @@ describe("routes : wikis", () => {
       request.get(base, (err, res, body) => {
         expect(err).toBeNull();
         expect(body).toContain("Wikis");
-        expect(body).toContain("New Wiki")
+        expect(body).toContain("New Wiki");
         done();
       });
     });
@@ -105,7 +108,7 @@ describe("routes : wikis", () => {
       request.post(options, (err, res, body) => {
         Wiki.findOne({ where: { title: "1" } })
           .then(wiki => {
-            expect(wiki).toBeNull()
+            expect(wiki).toBeNull();
             done();
           })
           .catch(err => {
@@ -113,7 +116,7 @@ describe("routes : wikis", () => {
             done();
           });
       });
-    })
+    });
   });
 
   describe("GET /wikis/:id", () => {
@@ -197,11 +200,11 @@ describe("routes : wikis", () => {
         Wiki.findOne({
           where: { body: "2" }
         }).then(wiki => {
-          expect(wiki).toBeNull()
+          expect(wiki).toBeNull();
           done();
         });
       });
-    })
+    });
     it("should update another user's wiki", done => {
       User.create({
         email: "fellowuser@gmail.com",
@@ -215,18 +218,20 @@ describe("routes : wikis", () => {
             body: "UPDATED BODY!!!!!",
             userId: this.user.id
           }
-        }
+        };
         request.post(fellowOption, (err, res, body) => {
-          Wiki.findOne({where: {title: "I was updated"}}).then(wiki => {
-            expect(wiki.title).toBe("I was updated")
-            expect(wiki.body).toBe("UPDATED BODY!!!!!")
-            done()
-          }).catch(err => {
-            console.log(err)
-            done()
-          })
-        })
-      })
-    })
+          Wiki.findOne({ where: { title: "I was updated" } })
+            .then(wiki => {
+              expect(wiki.title).toBe("I was updated");
+              expect(wiki.body).toBe("UPDATED BODY!!!!!");
+              done();
+            })
+            .catch(err => {
+              console.log(err);
+              done();
+            });
+        });
+      });
+    });
   });
 });

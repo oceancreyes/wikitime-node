@@ -11,7 +11,7 @@ describe("Wiki", () => {
       User.create({
         username: "rabbitroger",
         email: "rabbitroger@tesla.com",
-        password: "rogerrrrrrrrr",
+        password: "rogerrrrrrrrr"
       }).then(user => {
         this.user = user; //store the user
         Wiki.create({
@@ -54,17 +54,17 @@ describe("Wiki", () => {
           done();
         })
         .catch(err => {
-            expect(err.message).toContain("Wiki.userId cannot be null")
+          expect(err.message).toContain("Wiki.userId cannot be null");
           done();
         });
     });
   });
 });
 describe("#getWikis", () => {
-    it("should return all associated posts from the main topic", done => {
-      this.user.getWikis().then(wikis => {
-        expect(wikis[0].title).toBe("JavaScript");
-        done();
-      });
+  it("should return all associated posts from the main topic", done => {
+    this.user.getWikis().then(wikis => {
+      expect(wikis[0].title).toBe("JavaScript");
+      done();
     });
+  });
 });

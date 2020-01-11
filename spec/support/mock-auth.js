@@ -7,7 +7,7 @@ module.exports = {
       id = req.body.userId || id;
       username = req.body.username || username;
       email = req.body.email || email;
- 
+
       if (id && id != 0) {
         req.user = {
           id: id,
@@ -15,7 +15,7 @@ module.exports = {
           email: email,
           role: role
         };
-       // res.locals.currentUser = req.user
+        res.locals.currentUser = req.user;
       } else if (id == 0) {
         delete req.user;
       }

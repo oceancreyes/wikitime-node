@@ -26,33 +26,36 @@ module.exports = {
         callback(err);
       });
   },
-  upgradeAccount(id, callback){
-    console.log(id)
-    User.findByPk(id).then(user => {
-     console.log(user)
-      if(!user){
-        return callback("User not found.")
-      } else {
-         user.update({role: 1})
-         .then(newUser => {
-          callback(null, newUser)
-         })
-      }
-    }).catch(err => {
-      console.log(err)
-    })
+  upgradeAccount(id, callback) {
+    User.findByPk(id)
+      .then(user => {
+        if (!user) {
+          console.log(user.role);
+
+          return callback("User not found.");
+        } else {
+          user.update({ role: 1 }).then(newUser => {
+            callback(null, newUser);
+          });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   },
-  downgradeAccount(id, callback){
-    User.findByPk(id).then(user => {
-      if(!user){
-        return callback("User not found.")
-      } else {
-        user.update({role: 0}).then(() => {
-          callback(null, user)
-        })
-      }
-    }).catch(err => {
-      console.log(err)
-    })
+  downgradeAccount(id, callback) {
+    User.findByPk(id)
+      .then(user => {
+        if (!user) {
+          return callback("User not found.");
+        } else {
+          user.update({ role: 0 }).then(newUser => {
+            callback(null, newUser);
+          });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 };

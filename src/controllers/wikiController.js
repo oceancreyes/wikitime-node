@@ -1,8 +1,10 @@
 let wikiQueries = require("../db/queries.wikis.js");
 let Authorizer = require("../policies/appPolicies.js");
+const markdown = require("markdown").markdown;
 
 module.exports = {
   index(req, res, next) {
+    let saved = req.user;
     wikiQueries.getAllWikis((err, wikis) => {
       if (err) {
         res.redirect(500, "static/index");
@@ -16,6 +18,7 @@ module.exports = {
       if (err || wiki == null) {
         res.redirect(404, "/");
       } else {
+        wiki.body = markdown.toHTML(wiki.body);
         res.render("wikis/show", { wiki });
       }
     });
@@ -66,12 +69,12 @@ module.exports = {
   },
   update(req, res, next) {
     wikiQueries.updateWiki(req, req.body, (err, wiki) => {
-      if(err || wiki == null){
-        res.redirect(401, `/wikis/${req.params.id}/edit`)
-      } else{
-        res.redirect(`/wikis/${req.params.id}`)
+      if (err || wiki == null) {
+        res.redirect(401, `/wikis/${req.params.id}/edit`);
+      } else {
+        res.redirect(`/wikis/${req.params.id}`);
       }
-    })
+    });
   },
   destroy(req, res, next) {
     wikiQueries.deleteWiki(req, (err, wiki) => {

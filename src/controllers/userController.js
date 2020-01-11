@@ -26,23 +26,18 @@ module.exports = {
     });
   },
   signInForm(req, res, next) {
-  res.render("users/sign_in");
+    res.render("users/sign_in");
   },
   signIn(req, res, next) {
-    passport.authenticate("local")(
-      //activates passport first then kind of loops back to the signIn(req, res, next) function again
-      req,
-      res,
-      function() {
-        if (req.user) {
-          req.flash("notice", "You've successfully signed in!");
-          res.redirect("/");
-        } else {
-          req.flash("notice", "Sign in failed. Please try again.");
-          res.redirect("/users/sign_in");
-        }
+    passport.authenticate("local")(req, res, function() {
+      if (!req.user) {
+        req.flash("notice", "Sign in failed. Please try again.");
+        res.redirect("/users/sign_in");
+      } else {
+        req.flash("notice", "You've successfully signed in!");
+        res.redirect("/");
       }
-    );
+    });
   },
   signOut(req, res, next) {
     req.logout();
@@ -50,8 +45,13 @@ module.exports = {
     res.redirect("/");
   },
   upgradeForm(req, res, next) {
-    console.log(req.user)
-    res.render("users/upgrade");
+    let currentUser = req.user;
+    if (req.user) {
+      res.render("users/upgrade");
+    } else {
+      req.flash("notice", "You've successfully signed in!");
+      res.redirect("/");
+    }
   },
   upgrade(req, res, next) {
     let payment = 1500;
@@ -59,41 +59,40 @@ module.exports = {
       .create({
         email: req.body.stripeEmail,
         source: req.body.stripeToken
-            })
+      })
       .then(customer => {
         stripe.charges
           .create({
-           amount: payment,
+            amount: payment,
             description: "WikiTime Charge",
             currency: "usd",
             customer: customer.id
           })
           .then(charge => {
             userQueries.upgradeAccount(req.user.id, (err, newUser) => {
-              if(newUser){
+              if (newUser) {
                 req.flash("notice", "Your account is now Premium!");
                 res.redirect("/");
               } else {
-              req.flash("notice", "Payment failed. Try again.");
-              res.redirect("/users/upgrade");
-            }
-            })
+                req.flash("notice", "Payment failed. Try again.");
+                res.redirect("/users/upgrade");
+              }
+            });
           })
           .catch(err => {
-            console.log(err)
+            console.log(err);
           });
       });
-
   },
-  downgrade(req, res, next){
+  downgrade(req, res, next) {
     userQueries.downgradeAccount(req.user.id, (err, success) => {
-      if(success){
-        req.flash("notice", "Your account has been downgraded from Premium!")
+      if (success) {
+        req.flash("notice", "Your account has been downgraded from Premium!");
         res.redirect("/");
-      } else{
-        req.flash("notice", "Error...couldn't downgrade at this time!")
+      } else {
+        req.flash("notice", "Error...couldn't downgrade at this time!");
         res.redirect("/users/upgrade");
       }
-    })
+    });
   }
 };
