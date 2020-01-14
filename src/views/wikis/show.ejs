@@ -22,7 +22,7 @@
           <p>
             <%- wiki.body %>
           </p>
-          <% if(currentUser.role != 0) { %>
+          <% if(currentUser.role != 0 && wiki.private != true) { %>
             <form style="display:initial" action="/wikis/<%= wiki.id %>/makePrivate" method="post">
               <button type="submit" class="btn btn-danger">Make Wiki Private</button>
             </form>

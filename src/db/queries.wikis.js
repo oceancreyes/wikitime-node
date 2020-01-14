@@ -14,7 +14,6 @@ module.exports = {
   getSpecificWiki(id, callback) {
     return Wiki.findByPk(id)
       .then(wiki => {
-        console.log(wiki)
         callback(null, wiki);
       })
       .catch(err => {
@@ -103,6 +102,14 @@ module.exports = {
     }).catch(err => {
       console.log(err)
     })
-    
+   },
+   getUserPrivateWikis(user, callback){
+     return Wiki.findAll({where: {userId: user.id}}).then(wikis => {
+   let privateWikis = wikis.filter(wiki => wiki.private == true)
+      callback(null, privateWikis)
+     })
+     .catch(err => {
+       callback(err)
+     })
    }
 };

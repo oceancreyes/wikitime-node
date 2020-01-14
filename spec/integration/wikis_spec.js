@@ -62,6 +62,21 @@ describe("routes : wikis", () => {
         done();
       });
     });
+    it("should not render a private wiki in public wiki index", done => {
+      Wiki.create({
+        title: "Private Wiki",
+        body: "This wiki should not show",
+        userId: this.user.id,
+        private: true
+      }).then(wiki => {
+        let privateWiki = wiki;
+        request.get(`${base}wikis`, (err, res, body) => {
+          expect(err).toBeNull()
+          expect(body).not.toContain("Private Wiki")
+          done()
+        })
+      })
+    })
   });
 
   describe("GET /wikis/new", () => {
@@ -129,6 +144,7 @@ describe("routes : wikis", () => {
         done();
       });
     });
+   
   });
 
   describe("POST /wikis/:id/destroy", () => {
@@ -242,8 +258,12 @@ describe("routes : wikis", () => {
       request.post(url, (err, res, body) => {
         Wiki.findByPk(this.wiki.id).then(wiki => {
           expect(wiki.private).toBe(true)
+          done()
+
+        }).catch(err => {
+          console.log(err)
+          donwe()
         })
-        done()
       })
     })
   })
