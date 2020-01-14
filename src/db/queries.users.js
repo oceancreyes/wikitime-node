@@ -1,6 +1,7 @@
 const User = require("./models").User;
 const bcrypt = require("bcryptjs");
 const sgMail = require("@sendgrid/mail");
+const wikiQueries  = require("./queries.wikis.js")
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 module.exports = {
@@ -30,8 +31,6 @@ module.exports = {
     User.findByPk(id)
       .then(user => {
         if (!user) {
-          console.log(user.role);
-
           return callback("User not found.");
         } else {
           user.update({ role: 1 }).then(newUser => {
@@ -50,6 +49,7 @@ module.exports = {
           return callback("User not found.");
         } else {
           user.update({ role: 0 }).then(newUser => {
+            wikiQueries.privateToPublic(newUser)
             callback(null, newUser);
           });
         }

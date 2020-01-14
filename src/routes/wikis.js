@@ -25,5 +25,10 @@ router.post(
   validation.validateWiki,
   wikiController.update
 );
+router.post(
+  "/wikis/:id/makePrivate",
+  helper.ensureAuthenticated,
+  wikiController.makePrivate
+);
 
 module.exports = router;

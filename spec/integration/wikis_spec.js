@@ -13,7 +13,8 @@ describe("routes : wikis", () => {
       User.create({
         username: "tommychocolate",
         email: "chocolatetom@gmail.com",
-        password: "123456789"
+        password: "123456789",
+        role: 1
       })
         .then(user => {
           this.user = user;
@@ -88,6 +89,7 @@ describe("routes : wikis", () => {
           .then(wiki => {
             expect(wiki.title).toBe("Brand new wiki");
             expect(wiki.body).toBe("New wiki body!");
+            expect(wiki.private).toBe(false)
             done();
           })
           .catch(err => {
@@ -234,4 +236,15 @@ describe("routes : wikis", () => {
       });
     });
   });
+  describe("POST /wikis/:wikiId/makePrivate", () => {
+    it("should make a public wiki private if user's id is not 0", done => {
+      let url =  `${base}${this.wiki.id}/makePrivate`
+      request.post(url, (err, res, body) => {
+        Wiki.findByPk(this.wiki.id).then(wiki => {
+          expect(wiki.private).toBe(true)
+        })
+        done()
+      })
+    })
+  })
 });

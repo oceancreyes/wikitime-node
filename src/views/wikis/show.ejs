@@ -22,7 +22,11 @@
           <p>
             <%- wiki.body %>
           </p>
-
+          <% if(currentUser.role != 0) { %>
+            <form style="display:initial" action="/wikis/<%= wiki.id %>/makePrivate" method="post">
+              <button type="submit" class="btn btn-danger">Make Wiki Private</button>
+            </form>
+            <% } %>
     </main>
 
     <%- include ('../static/partials/baseScripts.ejs')  %>

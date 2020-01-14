@@ -17,7 +17,7 @@ module.exports = {
     wikiQueries.getSpecificWiki(req.params.id, (err, wiki) => {
       if (err || wiki == null) {
         res.redirect(404, "/");
-      } else {
+      } else if (wiki) {
         wiki.body = markdown.toHTML(wiki.body);
         res.render("wikis/show", { wiki });
       }
@@ -48,12 +48,19 @@ module.exports = {
     });
   },
   create(req, res, next) {
-    let authorized = new Authorizer(req.user).create();
-    if (authorized) {
-      let newWiki = {
+  let authorized = new Authorizer(req.user).create();
+       if (authorized) {
+        var private;
+        if(req.body.private_or_public == "true"){
+          private = true
+        } else{
+          private = false;
+        }
+      const newWiki = {
         title: req.body.title,
         body: req.body.body,
-        userId: req.user.id
+        userId: req.user.id,
+        private: private
       };
       wikiQueries.addWiki(newWiki, (err, wiki) => {
         if (err) {
@@ -84,5 +91,18 @@ module.exports = {
         res.redirect(303, "/wikis");
       }
     });
+  },
+  makePrivate(req, res, next){
+    // let authorizedAdmin = new Authorizer(req.user).isAdmin()
+    // let authorizedPremium = new Authorizer(req.user).isPremium()
+    wikiQueries.makePrivate(req.params.id, (err, updatedWiki) => {
+      if(err){
+        req.flash("notice", "Something went wrong.");
+        res.redirect("/wikis")
+      } else{
+        req.flash("notice", "Wiki is now private!");
+        res.redirect("/wikis")
+      }
+    })
   }
 };

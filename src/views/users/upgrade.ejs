@@ -18,15 +18,16 @@
             <li>Create private wikis!</li>
             <li>Collaborate on private wikis with other members!</li>
           </ul>
-          <form action="/users/<%=currentUser.id%>/upgrade" method="POST">
+          <form action="/users/upgrade" method="POST">
             <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key='pk_test_7RZjqkFhQdcdESPTEAfxDndj00Rn60Zmrd' data-amount="1500" data-name="Demo Site" data-description="WikiTime Premium Membership" data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
               data-locale="auto">
             </script>
           </form>
           <% } else if( currentUser && (currentUser.role == 1)) { %>
             <h2>Are you sure you want to downgrade your account?? You're currently a Premium member.</h2>
-            <form action="/users/<%=currentUser.id%>/downgrade" method="POST">
-              <button type="submit" class="btn btn-danger">Downgrade my account</button>
+            <p>Keep in mind you will lose all your Premium privileges and all your private wikis will become public!</p>
+            <form action="/users/downgrade" method="POST">
+              <button type="submit" class="btn btn-danger">Downgrade my account anyway!</button>
               <small class="text-muted" id="buttonHelp">this cannot be undone</small>
 
             </form>
