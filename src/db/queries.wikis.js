@@ -1,5 +1,7 @@
 let Wiki = require("./models").Wiki;
 let Authorizer = require("../policies/appPolicies.js");
+const Collaborator = require("./models").Collaborator;
+const User = require("./models").User;
 
 module.exports = {
   getAllWikis(callback) {
@@ -11,14 +13,39 @@ module.exports = {
         callback(err);
       });
   },
-  getSpecificWiki(id, callback) {
-    return Wiki.findByPk(id)
-      .then(wiki => {
-        callback(null, wiki);
-      })
-      .catch(err => {
-        callback(err);
-      });
+  getSpecificWiki(user, id, callback) {
+    var result = {};
+    return Wiki.findByPk(id).then(wiki => {
+      if (!wiki) {
+        callback(404);
+      } else {
+        result["wiki"] = wiki;
+        Collaborator.scope({ method: ["collaboratorsFor", id] })
+          .findAll()
+          .then(collaborators => {
+            result["collaborators"] = collaborators;
+            callback(null, result);
+          })
+          .catch(err => {
+            callback(err);
+          });
+      }
+    });
+    //   const result = {};
+    //  return Wiki.findByPk(id)
+    //     .then(wiki => {
+    //       if(wiki.private == true && user.id == wiki.userId && (user.role == 1 || user.role == 2)){
+
+    //         callback(null, result);
+    //     } else if(wiki.private == false){
+    //       callback(null, result)
+    //     } else{
+    //       callback("Error")
+    //     }
+    //     })
+    //     .catch(err => {
+    //       callback(err);
+    //     });
   },
   addWiki(newWiki, callback) {
     return Wiki.create({
@@ -31,7 +58,7 @@ module.exports = {
         callback(null, wiki);
       })
       .catch(err => {
-        console.log(err)
+        console.log(err);
         callback(err);
       });
   },
@@ -75,8 +102,8 @@ module.exports = {
         callback(err);
       });
   },
-  privateToPublic(user){
-      return Wiki.findAll()
+  privateToPublic(user) {
+    return Wiki.findAll()
       .then(wikis => {
         wikis.forEach(wiki => {
           if (wiki.userId == user.id && wiki.private == true) {
@@ -89,27 +116,30 @@ module.exports = {
       .catch(err => {
         console.log(err);
       });
-   },
-   makePrivate(id, callback){
-    return Wiki.findByPk(id).then(wiki => {
-      if(!wiki){
-        return callback("Wiki not found")
-      } else { 
-        wiki.update({private: true}).then(updatedWiki => {
-        callback(false, updatedWiki)
+  },
+  makePrivate(id, callback) {
+    return Wiki.findByPk(id)
+      .then(wiki => {
+        if (!wiki) {
+          return callback("Wiki not found");
+        } else {
+          wiki.update({ private: true }).then(updatedWiki => {
+            callback(false, updatedWiki);
+          });
+        }
       })
-    }
-    }).catch(err => {
-      console.log(err)
-    })
-   },
-   getUserPrivateWikis(user, callback){
-     return Wiki.findAll({where: {userId: user.id}}).then(wikis => {
-   let privateWikis = wikis.filter(wiki => wiki.private == true)
-      callback(null, privateWikis)
-     })
-     .catch(err => {
-       callback(err)
-     })
-   }
+      .catch(err => {
+        console.log(err);
+      });
+  },
+  getUserPrivateWikis(user, callback) {
+    return Wiki.findAll({ where: { userId: user.id } })
+      .then(wikis => {
+        let privateWikis = wikis.filter(wiki => wiki.private == true);
+        callback(null, privateWikis);
+      })
+      .catch(err => {
+        callback(err);
+      });
+  }
 };

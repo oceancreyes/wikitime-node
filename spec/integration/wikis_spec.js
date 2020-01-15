@@ -71,12 +71,12 @@ describe("routes : wikis", () => {
       }).then(wiki => {
         let privateWiki = wiki;
         request.get(`${base}wikis`, (err, res, body) => {
-          expect(err).toBeNull()
-          expect(body).not.toContain("Private Wiki")
-          done()
-        })
-      })
-    })
+          expect(err).toBeNull();
+          expect(body).not.toContain("Private Wiki");
+          done();
+        });
+      });
+    });
   });
 
   describe("GET /wikis/new", () => {
@@ -104,7 +104,7 @@ describe("routes : wikis", () => {
           .then(wiki => {
             expect(wiki.title).toBe("Brand new wiki");
             expect(wiki.body).toBe("New wiki body!");
-            expect(wiki.private).toBe(false)
+            expect(wiki.private).toBe(false);
             done();
           })
           .catch(err => {
@@ -144,7 +144,6 @@ describe("routes : wikis", () => {
         done();
       });
     });
-   
   });
 
   describe("POST /wikis/:id/destroy", () => {
@@ -254,17 +253,18 @@ describe("routes : wikis", () => {
   });
   describe("POST /wikis/:wikiId/makePrivate", () => {
     it("should make a public wiki private if user's id is not 0", done => {
-      let url =  `${base}${this.wiki.id}/makePrivate`
+      let url = `${base}${this.wiki.id}/makePrivate`;
       request.post(url, (err, res, body) => {
-        Wiki.findByPk(this.wiki.id).then(wiki => {
-          expect(wiki.private).toBe(true)
-          done()
-
-        }).catch(err => {
-          console.log(err)
-          donwe()
-        })
-      })
-    })
-  })
+        Wiki.findByPk(this.wiki.id)
+          .then(wiki => {
+            expect(wiki.private).toBe(true);
+            done();
+          })
+          .catch(err => {
+            console.log(err);
+            donwe();
+          });
+      });
+    });
+  });
 });

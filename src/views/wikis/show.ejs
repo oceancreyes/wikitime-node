@@ -15,18 +15,22 @@
       </h1>
       <% if(currentUser) { %>
         <a href="/wikis/<%= wiki.id %>/edit" class="btn btn-warning">Edit</a>
-        <form style="display:initial" action="/wikis/<%= wiki.id %>/destroy" method="post">
-          <button type="submit" class="btn btn-danger">Delete</button>
-        </form>
-        <% } %>
-          <p>
-            <%- wiki.body %>
-          </p>
-          <% if(currentUser.role != 0 && wiki.private != true) { %>
-            <form style="display:initial" action="/wikis/<%= wiki.id %>/makePrivate" method="post">
-              <button type="submit" class="btn btn-danger">Make Wiki Private</button>
+        <% if(currentUser.role != 0 && wiki.private == true) { %>
+          <a href="/wikis/<%= wiki.id %>/collaborators" class="btn btn-info">Collaborators</a>
+          <% } %>
+            <form style="display:initial" action="/wikis/<%= wiki.id %>/destroy" method="post">
+              <button type="submit" class="btn btn-danger">Delete</button>
             </form>
             <% } %>
+
+              <p>
+                <%- wiki.body %>
+              </p>
+              <% if(currentUser.role != 0 && wiki.private != true) { %>
+                <form style="display:initial" action="/wikis/<%= wiki.id %>/makePrivate" method="post">
+                  <button type="submit" class="btn btn-danger">Make Wiki Private</button>
+                </form>
+                <% } %>
     </main>
 
     <%- include ('../static/partials/baseScripts.ejs')  %>

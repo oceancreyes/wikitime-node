@@ -20,9 +20,9 @@
         <div class="form-group">
           <label for="body">Body</label>
           <textarea rows="4" class="form-control" name="body" placeholder="Enter Body"></textarea>
-</div>
-          <% if(currentUser && currentUser.role != 0) {%>
-            <select name="private_or_public">
+        </div>
+        <% if(currentUser && currentUser.role != 0) {%>
+          <select name="private_or_public">
               <option value="true">
                 Private
               </option>
@@ -30,10 +30,9 @@
                 Public
               </option>
             </select>
-           <% } %>
-  
+          <% } %>
 
-          <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
       </form>
 
     </main>

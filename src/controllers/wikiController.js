@@ -15,9 +15,12 @@ module.exports = {
   },
   show(req, res, next) {
     let saved = req.user;
-    wikiQueries.getSpecificWiki(req.params.id, (err, wiki) => {
+    wikiQueries.getSpecificWiki(req.user, req.params.id, (err, result) => {
+      wiki = result["wiki"];
+      collaborators = result["collaborators"];
       if (err || wiki == null) {
-        res.redirect(404, "/");
+        req.flash("notice", "Something went wrong.");
+        res.redirect("/");
       } else if (wiki) {
         wiki.body = markdown.toHTML(wiki.body);
         res.render("wikis/show", { wiki });
@@ -34,13 +37,15 @@ module.exports = {
     }
   },
   edit(req, res, next) {
-    wikiQueries.getSpecificWiki(req.params.id, (err, wiki) => {
+    wikiQueries.getSpecificWiki(req.params.id, (err, result) => {
+      wiki = result["wiki"];
+      collaborators = result["collaborators"];
       if (err || wiki == null) {
         res.redirect(404, "/");
       } else {
         let authorized = new Authorizer(req.user, wiki).edit();
         if (authorized) {
-          res.render("wikis/edit", { wiki });
+          res.render("wikis/edit", { wiki, collaborators });
         } else {
           req.flash("You are not authorized to do that.");
           res.redirect(`/wikis/${req.params.id}`);
@@ -49,14 +54,14 @@ module.exports = {
     });
   },
   create(req, res, next) {
-  let authorized = new Authorizer(req.user).create();
-       if (authorized) {
-        var private;
-        if(req.body.private_or_public == "true"){
-          private = true
-        } else{
-          private = false;
-        }
+    let authorized = new Authorizer(req.user).create();
+    if (authorized) {
+      var private;
+      if (req.body.private_or_public == "true") {
+        private = true;
+      } else {
+        private = false;
+      }
       const newWiki = {
         title: req.body.title,
         body: req.body.body,
@@ -93,33 +98,33 @@ module.exports = {
       }
     });
   },
-  makePrivate(req, res, next){
-     if(req.user.role != 0){
-    wikiQueries.makePrivate(req.params.id, (err, updatedWiki) => {
-      if(err){
-        console.log("BAD")
-        req.flash("notice", "Something went wrong.");
-        res.redirect("/wikis")
-      } else{
-        console.log("GOOD")
-        req.flash("notice", "Wiki is now private!");
-        res.redirect("/wikis")
-      }
-    })
-   }
+  makePrivate(req, res, next) {
+    if (req.user.role != 0) {
+      wikiQueries.makePrivate(req.params.id, (err, updatedWiki) => {
+        if (err) {
+          console.log("BAD");
+          req.flash("notice", "Something went wrong.");
+          res.redirect("/wikis");
+        } else {
+          console.log("GOOD");
+          req.flash("notice", "Wiki is now private!");
+          res.redirect("/wikis");
+        }
+      });
+    }
   },
-   privateIndex(req, res, next){
-     const authorizedPremium = new Authorizer(req.user).isPremium();
-     let authorizedAdmin = new Authorizer(req.user).isAdmin()
-     if(authorizedPremium || authorizedAdmin){
-       wikiQueries.getUserPrivateWikis(req.user, (err, privateWikis) => {
-         if(err){
-           req.flash("notice", "Something went wrong.")
-           res.redirect("/wikis")
-         } else{
-           res.render("wikis/privateWikis", {privateWikis})
-         }
-       })
-     }
-   }
+  privateIndex(req, res, next) {
+    const authorizedPremium = new Authorizer(req.user).isPremium();
+    let authorizedAdmin = new Authorizer(req.user).isAdmin();
+    if (authorizedPremium || authorizedAdmin) {
+      wikiQueries.getUserPrivateWikis(req.user, (err, privateWikis) => {
+        if (err) {
+          req.flash("notice", "Something went wrong.");
+          res.redirect("/wikis");
+        } else {
+          res.render("wikis/privateWikis", { privateWikis });
+        }
+      });
+    }
+  }
 };

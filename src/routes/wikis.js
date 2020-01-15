@@ -6,11 +6,14 @@ const validation = require("./validation");
 
 router.get("/wikis", wikiController.index);
 router.get("/wikis/new", helper.ensureAuthenticated, wikiController.new);
-router.get("/wikis/privateWikis", helper.ensureAuthenticated, wikiController.privateIndex)
+router.get(
+  "/wikis/privateWikis",
+  helper.ensureAuthenticated,
+  wikiController.privateIndex
+);
 
 router.get("/wikis/:id", wikiController.show);
 router.get("/wikis/:id/edit", helper.ensureAuthenticated, wikiController.edit);
-
 router.post(
   "/wikis/create",
   helper.ensureAuthenticated,

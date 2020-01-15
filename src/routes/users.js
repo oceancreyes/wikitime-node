@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/userController");
 const helper = require("../auth/helpers.js");
 const validation = require("./validation");
+const User = require("../../src/db/models").User;
 
 router.get("/users/sign_up", userController.signUp);
 router.get("/users/sign_in", userController.signInForm);
@@ -24,5 +25,6 @@ router.post(
   helper.ensureAuthenticated,
   userController.downgrade
 );
+router.get("/users/collaborators", userController.showcollaborator);
 
 module.exports = router;
