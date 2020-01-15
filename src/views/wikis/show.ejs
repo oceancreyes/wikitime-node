@@ -9,10 +9,16 @@
   <%- include ('../static/partials/navbar.ejs')  %>
 
     <main class="container">
+      <%- include ('../static/partials/navbar.ejs')  %>
 
       <h1>
+        <div style="display: flex; align-items:center;">
+
         <%= wiki.title %>
+      </div>
+
       </h1>
+
       <% if(currentUser) { %>
         <a href="/wikis/<%= wiki.id %>/edit" class="btn btn-warning">Edit</a>
         <% if(currentUser.role != 0 && wiki.private == true && currentUser.id == wiki.userId) { %>

@@ -77,6 +77,7 @@ module.exports = {
       };
       wikiQueries.addWiki(newWiki, (err, wiki) => {
         if (err) {
+          req.flash("error", "Something went wrong")
           res.redirect(500, "wiki/new");
         } else {
           res.redirect(303, `/wikis/${wiki.id}`);
@@ -109,11 +110,9 @@ module.exports = {
     if (req.user.role != 0) {
       wikiQueries.makePrivate(req.params.id, (err, updatedWiki) => {
         if (err) {
-          console.log("BAD");
           req.flash("notice", "Something went wrong.");
           res.redirect("/wikis");
         } else {
-          console.log("GOOD");
           req.flash("notice", "Wiki is now private!");
           res.redirect("/wikis");
         }

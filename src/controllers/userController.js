@@ -15,7 +15,7 @@ module.exports = {
     };
     userQueries.createUser(newUser, (err, user) => {
       if (err) {
-        req.flash("error", err);
+        req.flash("error", "Username and email already exists.");
         res.redirect("/users/sign_up");
       } else {
         passport.authenticate("local")(req, res, function() {
@@ -95,7 +95,7 @@ module.exports = {
       }
     });
   },
-  showcollaborator(req, res, next) {
+  showCollaborators(req, res, next) {
     userQueries.getUser(req.user.id, (err, result) => {
       user = result["user"];
       collaborator = result["collaborator"];

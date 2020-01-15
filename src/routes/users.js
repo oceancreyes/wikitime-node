@@ -25,6 +25,6 @@ router.post(
   helper.ensureAuthenticated,
   userController.downgrade
 );
-router.get("/users/collaborators", userController.showcollaborator);
+router.get("/users/collaborators", userController.showCollaborators);
 
 module.exports = router;

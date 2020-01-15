@@ -25,11 +25,13 @@ module.exports = (sequelize, DataTypes) => {
     });
     Collaborator.addScope("collaboratorsFor", id => {
       return {
+        //we include User model since we also want the connected User info (like email, username, etc.)
         include: [
           {
             model: models.User
           }
         ],
+        //returns collaborator entries where the collaborator's wikiId property matches the input id of the private wiki
         where: { wikiId: id },
         order: [["createdAt", "ASC"]]
       };

@@ -26,6 +26,12 @@ describe("routes : wikis", () => {
           })
             .then(wiki => {
               this.wiki = wiki;
+              Wiki.create({
+                title: "Abcdefghi",
+                body: "This wiki should not show",
+                userId: this.user.id,
+                private: true
+              }).then(privateWiki => {
               request.get(
                 {
                   url: "http://localhost:3000/auth/fake",
@@ -41,6 +47,7 @@ describe("routes : wikis", () => {
                 }
               );
             })
+          })
             .catch(err => {
               console.log(err);
               done();
@@ -53,8 +60,8 @@ describe("routes : wikis", () => {
     });
   });
 
-  describe("GET /wikis", () => {
-    it("should render the wiki index page", done => {
+  fdescribe("GET /wikis", () => {
+    fit("should render the wiki index page", done => {
       request.get(base, (err, res, body) => {
         expect(err).toBeNull();
         expect(body).toContain("Wikis");
@@ -62,21 +69,17 @@ describe("routes : wikis", () => {
         done();
       });
     });
-    it("should not render a private wiki in public wiki index", done => {
-      Wiki.create({
-        title: "Private Wiki",
-        body: "This wiki should not show",
-        userId: this.user.id,
-        private: true
-      }).then(wiki => {
-        let privateWiki = wiki;
-        request.get(`${base}wikis`, (err, res, body) => {
+    fit("should not render a private wiki in public wiki index", done => {
+      
+        request.get(`${base}`, (err, res, body) => {
           expect(err).toBeNull();
-          expect(body).not.toContain("Private Wiki");
+      expect(body).toContain("Wikis");
+
+          expect(body).not.toContain("Abcdefghi");
           done();
+        
         });
       });
-    });
   });
 
   describe("GET /wikis/new", () => {
