@@ -1,7 +1,6 @@
 let Wiki = require("./models").Wiki;
 let Authorizer = require("../policies/appPolicies.js");
 const Collaborator = require("./models").Collaborator;
-const User = require("./models").User;
 
 module.exports = {
   getAllWikis(callback) {
@@ -18,34 +17,30 @@ module.exports = {
     return Wiki.findByPk(id).then(wiki => {
       if (!wiki) {
         callback(404);
+      } else if(wiki.private == false){
+        callback(null, wiki)
       } else {
-        result["wiki"] = wiki;
         Collaborator.scope({ method: ["collaboratorsFor", id] })
           .findAll()
           .then(collaborators => {
             result["collaborators"] = collaborators;
+           var verifiedCollaborator = result["collaborators"].filter(collaborator => {
+             collaborator.userId == user.id
+           })
+            if((wiki.private == true && user.id == wiki.userId || result["collaborators"][0].userId == user.id)){
+             result["wiki"] = wiki;
             callback(null, result);
+          } else{
+            callback("error")
+          }
           })
           .catch(err => {
             callback(err);
           });
-      }
+        
+        
+      } 
     });
-    //   const result = {};
-    //  return Wiki.findByPk(id)
-    //     .then(wiki => {
-    //       if(wiki.private == true && user.id == wiki.userId && (user.role == 1 || user.role == 2)){
-
-    //         callback(null, result);
-    //     } else if(wiki.private == false){
-    //       callback(null, result)
-    //     } else{
-    //       callback("Error")
-    //     }
-    //     })
-    //     .catch(err => {
-    //       callback(err);
-    //     });
   },
   addWiki(newWiki, callback) {
     return Wiki.create({

@@ -13,9 +13,8 @@ module.exports = {
       res.redirect(req.headers.referer);
     });
   },
-
   edit(req, res, next) {
-    wikiQueries.getWiki(req.params.wikiId, (err, result) => {
+    wikiQueries.getSpecificWiki(req.user, req.params.wikiId, (err, result) => {
       wiki = result["wiki"];
       collaborators = result["collaborators"];
       if (err || wiki == null) {

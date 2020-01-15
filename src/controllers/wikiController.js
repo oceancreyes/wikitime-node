@@ -16,15 +16,22 @@ module.exports = {
   show(req, res, next) {
     let saved = req.user;
     wikiQueries.getSpecificWiki(req.user, req.params.id, (err, result) => {
-      wiki = result["wiki"];
-      collaborators = result["collaborators"];
-      if (err || wiki == null) {
-        req.flash("notice", "Something went wrong.");
+      if(result){
+       wiki = result["wiki"];
+       if(result["collaborators"]){
+       collaborators = result["collaborators"]
+       }
+    }
+      if (err) {
+        req.flash("error", "Not authorized.");
         res.redirect("/");
-      } else if (wiki) {
+      } else if (wiki || result) {
+        if(wiki == null || wiki == false){
+          var wiki = result;
+        }
         wiki.body = markdown.toHTML(wiki.body);
         res.render("wikis/show", { wiki });
-      }
+      } 
     });
   },
   new(req, res, next) {
@@ -37,7 +44,7 @@ module.exports = {
     }
   },
   edit(req, res, next) {
-    wikiQueries.getSpecificWiki(req.params.id, (err, result) => {
+    wikiQueries.getSpecificWiki(req.user, req.params.id, (err, result) => {
       wiki = result["wiki"];
       collaborators = result["collaborators"];
       if (err || wiki == null) {
@@ -114,8 +121,8 @@ module.exports = {
     }
   },
   privateIndex(req, res, next) {
-    const authorizedPremium = new Authorizer(req.user).isPremium();
-    let authorizedAdmin = new Authorizer(req.user).isAdmin();
+    const authorizedPremium = new Authorizer(req.user)._isPremium();
+    let authorizedAdmin = new Authorizer(req.user)._isAdmin();
     if (authorizedPremium || authorizedAdmin) {
       wikiQueries.getUserPrivateWikis(req.user, (err, privateWikis) => {
         if (err) {
