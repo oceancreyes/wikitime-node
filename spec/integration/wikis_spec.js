@@ -60,8 +60,8 @@ describe("routes : wikis", () => {
     });
   });
 
-  fdescribe("GET /wikis", () => {
-    fit("should render the wiki index page", done => {
+  describe("GET /wikis", () => {
+    it("should render the wiki index page", done => {
       request.get(base, (err, res, body) => {
         expect(err).toBeNull();
         expect(body).toContain("Wikis");
@@ -69,7 +69,7 @@ describe("routes : wikis", () => {
         done();
       });
     });
-    fit("should not render a private wiki in public wiki index", done => {
+    it("should not render a private wiki in public wiki index", done => {
       
         request.get(`${base}`, (err, res, body) => {
           expect(err).toBeNull();
@@ -153,7 +153,7 @@ describe("routes : wikis", () => {
     it("should delete the wiki with the associated ID", done => {
       Wiki.findAll().then(wikis => {
         const wikiCountBeforeDelete = wikis.length;
-        expect(wikiCountBeforeDelete).toBe(1);
+        expect(wikiCountBeforeDelete).toBe(2);
         request.post(`${base}${this.wiki.id}/destroy`, (err, res, body) => {
           Wiki.findAll()
             .then(wikis => {
@@ -170,8 +170,8 @@ describe("routes : wikis", () => {
     });
   });
 
-  describe("GET /wikis/:id/edit", () => {
-    it("should render a view with an edit wiki form", done => {
+  fdescribe("GET /wikis/:id/edit", () => {
+    fit("should render a view with an edit wiki form", done => {
       request.get(`${base}${this.wiki.id}/edit`, (err, res, body) => {
         expect(err).toBeNull();
         expect(body).toContain("Edit Wiki");
@@ -270,5 +270,4 @@ describe("routes : wikis", () => {
       });
     });
   });
-  describe("GET /wikis/id")
 });

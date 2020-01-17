@@ -53,7 +53,7 @@ describe("routes : users", () => {
         });
       });
     });
-    describe("POST /users/upgrade", () => {
+    describe("POST /users/upgrade and POST /users/downgrade", () => {
       it("should update the user's role from 0 to 1 (standard to premium)", done => {
         const options = {
           url: `${base}upgrade`,
@@ -146,6 +146,5 @@ describe("routes : users", () => {
         });
       });
     });
-   
   });
 });

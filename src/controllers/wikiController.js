@@ -47,11 +47,18 @@ module.exports = {
     wikiQueries.getSpecificWiki(req.user, req.params.id, (err, result) => {
       wiki = result["wiki"];
       collaborators = result["collaborators"];
-      if (err || wiki == null) {
+      if (err && wiki == null) {
         res.redirect(404, "/");
       } else {
-        let authorized = new Authorizer(req.user, wiki).edit();
-        if (authorized) {
+        let authorized;
+        let authorizedResult;
+        if(wiki){
+          authorized = new Authorizer(req.user, wiki).edit();
+        } else if(wiki == false || wiki == null){
+          wiki = result
+           authorizedResult = new Authorizer(req.user, wiki).edit()
+        }
+        if (authorized || authorizedResult) {
           res.render("wikis/edit", { wiki, collaborators });
         } else {
           req.flash("You are not authorized to do that.");
