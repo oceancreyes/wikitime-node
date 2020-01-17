@@ -77,11 +77,10 @@ describe("routes : collaborators", () => {
             })
         })
     })
-    fdescribe("GET /wikis/:wikiId/collaborators", () => {
-      fit("will return a form to add collaborators for a specific wiki", done => {
-        request.get(`/wikis/${this.wiki.id}/collaborators`, (err, res, body) => {
+  describe("GET /wikis/:wikiId/collaborators", () => {
+      it("will return a form to add collaborators for a specific wiki", done => {
+        request.get(`${base}${this.wiki.id}/collaborators`, (err, res, body) => {
           expect(err).toBeNull()
-      //    expect(body).toContain("Add")
           done()
         })
       })

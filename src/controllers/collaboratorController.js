@@ -15,20 +15,21 @@ module.exports = {
   },
   edit(req, res, next) {
     wikiQueries.getSpecificWiki(req.user, req.params.wikiId, (err, result) => {
-      wiki = result["wiki"];
-      collaborators = result["collaborators"];
-      if (err || wiki == null) {
+      if(result["wiki"]){
+      var  wiki = result["wiki"];
+      var  collaborators = result["collaborators"];
+      }
+      if (err && wiki == null || result == null) {
         res.redirect(404, "/");
-      } else {
+      } else if(req.user.Id == wiki.userId){
         //const authorized = new Authorizer(req.user, wiki, collaborators).edit();
-        if (1 == 1) {
           res.render("collaborators/edit", { wiki, collaborators });
-        } else {
+      }
+          else {
           req.flash("You are not authorized to do that.");
           res.redirect(`/wikis/${req.params.wikiId}`);
         }
-      }
-    });
+      });
   },
 
   remove(req, res, next) {
