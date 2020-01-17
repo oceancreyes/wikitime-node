@@ -1,6 +1,7 @@
 const request = require("request");
 const server = require("../../src/server");
 const base = "http://localhost:3000/wikis/";
+let base2 = "http://localhost:3000/users/collaborators";
 const User = require("../../src/db/models").User;
 const sequelize = require("../../src/db/models/index").sequelize;
 const Collaborator = require("../../src/db/models").Collaborator;
@@ -66,16 +67,24 @@ describe("routes : collaborators", () => {
         );
       });
     });
-    describe("GET /wikis/:wikiId/collaborators/add", () => {
-        it("should return an add collaborators form page", done => {
-            request.get(`${base}${this.wiki.id}/collaborators/add`, (err, res, body) => {
+    describe("GET /users/collaborators", () => {
+        it("should return a list of collaborators for the user", done => {
+            request.get(base2, (err, res, body) => {
                 expect(err).toBeNull()
                 expect(body).toContain("Collaborators")
-                expect(body).toContain("Add")
+                expect(body).toContain("You are not a collaborator on any wikis!")
                 done()
             })
         })
     })
+    fdescribe("GET /wikis/:wikiId/collaborators", () => {
+      fit("will return a form to add collaborators for a specific wiki", done => {
+        request.get(`/wikis/${this.wiki.id}/collaborators`, (err, res, body) => {
+          expect(err).toBeNull()
+      //    expect(body).toContain("Add")
+          done()
+        })
+      })
+    })
   });
-
 });
