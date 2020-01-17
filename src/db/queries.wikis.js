@@ -27,7 +27,7 @@ module.exports = {
            var verifiedCollaborator = result["collaborators"].filter(collaborator => {
              collaborator.userId == user.id
            })
-            if((wiki.private == true && user.id == wiki.userId || result["collaborators"][0].userId == user.id)){
+            if((wiki.private == true && user.id == wiki.userId || verifiedCollaborator)){
              result["wiki"] = wiki;
             callback(null, result);
           } else{

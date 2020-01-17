@@ -254,7 +254,7 @@ describe("routes : wikis", () => {
       });
     });
   });
-  describe("POST /wikis/:wikiId/makePrivate", () => {
+  describe("POST /wikis/:id/makePrivate", () => {
     it("should make a public wiki private if user's id is not 0", done => {
       let url = `${base}${this.wiki.id}/makePrivate`;
       request.post(url, (err, res, body) => {
@@ -270,4 +270,5 @@ describe("routes : wikis", () => {
       });
     });
   });
+  describe("GET /wikis/id")
 });
