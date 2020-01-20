@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const wikiQueries = require("../db/queries.wikis.js");
 const collaboratorQueries = require("../db/queries.collaborators.js");
-//const Authorizer = require('../policies/application');
 
 module.exports = {
   add(req, res, next) {
@@ -15,9 +14,9 @@ module.exports = {
   },
   edit(req, res, next) {
     wikiQueries.getSpecificWiki(req.user, req.params.wikiId, (err, result) => {
-      if(result["wiki"]){
-      var  wiki = result["wiki"];
-      var  collaborators = result["collaborators"];
+      if(result){
+      var wiki = result["wiki"];
+      var collaborators = result["collaborators"];
       }
       if (err && wiki == null || result == null) {
         res.redirect(404, "/");
