@@ -62,23 +62,23 @@ module.exports = {
   },
   getUser(id, callback) {
     let result = {};
-    User.findByPk(id)
-   .then((user) => {
-     if(!user) {
-       //console.log("user not found")
-       callback(404);
-     } else {
-       //console.log("user is valid");
-       result["user"] = user;
-       Collaborator.scope({method: ["collaborator", id]}).findAll()
-       .then((collaborator) => {
-         result["collaborator"] = collaborator;
-         callback(null, result);
-       })
-       .catch((err) => {
-         callback(err);
-       })
-     }
-   })
+    User.findByPk(id).then(user => {
+      if (!user) {
+        //console.log("user not found")
+        callback(404);
+      } else {
+        //console.log("user is valid");
+        result["user"] = user;
+        Collaborator.scope({ method: ["collaborator", id] })
+          .findAll()
+          .then(collaborator => {
+            result["collaborator"] = collaborator;
+            callback(null, result);
+          })
+          .catch(err => {
+            callback(err);
+          });
+      }
+    });
   }
 };

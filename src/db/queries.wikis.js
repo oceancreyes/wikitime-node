@@ -17,29 +17,32 @@ module.exports = {
     return Wiki.findByPk(id).then(wiki => {
       if (!wiki) {
         callback(404);
-      } else if(wiki.private == false){
-        callback(null, wiki)
+      } else if (wiki.private == false) {
+        callback(null, wiki);
       } else {
         Collaborator.scope({ method: ["collaboratorsFor", id] })
           .findAll()
           .then(collaborators => {
             result["collaborators"] = collaborators;
-           var verifiedCollaborator = result["collaborators"].filter(collaborator => {
-             collaborator.userId == user.id
-           })
-            if((wiki.private == true && user.id == wiki.userId || verifiedCollaborator)){
-             result["wiki"] = wiki;
-            callback(null, result);
-          } else{
-            callback("error")
-          }
+            var verifiedCollaborator = result["collaborators"].filter(
+              collaborator => {
+                collaborator.userId == user.id;
+              }
+            );
+            if (
+              (wiki.private == true && user.id == wiki.userId) ||
+              verifiedCollaborator
+            ) {
+              result["wiki"] = wiki;
+              callback(null, result);
+            } else {
+              callback("error");
+            }
           })
           .catch(err => {
             callback(err);
           });
-        
-        
-      } 
+      }
     });
   },
   addWiki(newWiki, callback) {

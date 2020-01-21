@@ -31,9 +31,8 @@ module.exports = (sequelize, DataTypes) => {
     Wiki.belongsTo(models.User, {
       foreignKey: "userId",
       onDelete: "CASCADE"
-    })
+    });
     // associations can be defined here
-   
   };
   return Wiki;
 };

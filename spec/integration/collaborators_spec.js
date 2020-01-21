@@ -11,33 +11,31 @@ describe("routes : collaborators", () => {
   beforeEach(done => {
     this.user;
     this.wiki;
-    sequelize
-      .sync({ force: true })
-      .then(() => {
-        User.create({
-          username: "tommyychocolate",
-          email: "chocolatetom@gmail.com",
-          password: "123456789",
-          role: 1
-        }).then(user => {
+    sequelize.sync({ force: true }).then(() => {
+      User.create({
+        username: "tommyychocolate",
+        email: "chocolatetom@gmail.com",
+        password: "123456789",
+        role: 1
+      })
+        .then(user => {
           this.user = user;
           Wiki.create({
             title: "JavaScript",
             body: "JS frameworks and fundamentals",
             userId: this.user.id,
             private: true
-          })
-            .then(wiki => {
-              this.wiki = wiki;
+          }).then(wiki => {
+            this.wiki = wiki;
+            done();
+          });
+        })
+        .catch(err => {
+          console.log(err);
           done();
         });
-      })
-      .catch(err => {
-        console.log(err);
-        done();
-      });
-  });       
- });
+    });
+  });
 
   describe("Collab", () => {
     this.userCrud;
@@ -68,22 +66,25 @@ describe("routes : collaborators", () => {
       });
     });
     describe("GET /users/collaborators", () => {
-        it("should return a list of collaborators for the user", done => {
-            request.get(base2, (err, res, body) => {
-                expect(err).toBeNull()
-                expect(body).toContain("Collaborators")
-                expect(body).toContain("You are not a collaborator on any wikis!")
-                done()
-            })
-        })
-    })
-  describe("GET /wikis/:wikiId/collaborators", () => {
+      it("should return a list of collaborators for the user", done => {
+        request.get(base2, (err, res, body) => {
+          expect(err).toBeNull();
+          expect(body).toContain("Collaborators");
+          expect(body).toContain("You are not a collaborator on any wikis!");
+          done();
+        });
+      });
+    });
+    describe("GET /wikis/:wikiId/collaborators", () => {
       it("will return a form to add collaborators for a specific wiki", done => {
-        request.get(`${base}${this.wiki.id}/collaborators`, (err, res, body) => {
-          expect(err).toBeNull()
-          done()
-        })
-      })
-    })
+        request.get(
+          `${base}${this.wiki.id}/collaborators`,
+          (err, res, body) => {
+            expect(err).toBeNull();
+            done();
+          }
+        );
+      });
+    });
   });
 });

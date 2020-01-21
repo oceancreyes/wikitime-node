@@ -32,22 +32,22 @@ describe("routes : wikis", () => {
                 userId: this.user.id,
                 private: true
               }).then(privateWiki => {
-              request.get(
-                {
-                  url: "http://localhost:3000/auth/fake",
-                  form: {
-                    userId: this.user.id,
-                    username: this.user.username,
-                    email: this.user.email,
-                    role: this.user.role
+                request.get(
+                  {
+                    url: "http://localhost:3000/auth/fake",
+                    form: {
+                      userId: this.user.id,
+                      username: this.user.username,
+                      email: this.user.email,
+                      role: this.user.role
+                    }
+                  },
+                  (err, res, body) => {
+                    done();
                   }
-                },
-                (err, res, body) => {
-                  done();
-                }
-              );
+                );
+              });
             })
-          })
             .catch(err => {
               console.log(err);
               done();
@@ -70,16 +70,14 @@ describe("routes : wikis", () => {
       });
     });
     it("should not render a private wiki in public wiki index", done => {
-      
-        request.get(`${base}`, (err, res, body) => {
-          expect(err).toBeNull();
-      expect(body).toContain("Wikis");
+      request.get(`${base}`, (err, res, body) => {
+        expect(err).toBeNull();
+        expect(body).toContain("Wikis");
 
-          expect(body).not.toContain("Abcdefghi");
-          done();
-        
-        });
+        expect(body).not.toContain("Abcdefghi");
+        done();
       });
+    });
   });
 
   describe("GET /wikis/new", () => {

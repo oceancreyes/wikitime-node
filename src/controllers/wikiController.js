@@ -16,22 +16,22 @@ module.exports = {
   show(req, res, next) {
     let saved = req.user;
     wikiQueries.getSpecificWiki(req.user, req.params.id, (err, result) => {
-      if(result){
-       wiki = result["wiki"];
-       if(result["collaborators"]){
-       collaborators = result["collaborators"]
-       }
-    }
+      if (result) {
+        wiki = result["wiki"];
+        if (result["collaborators"]) {
+          collaborators = result["collaborators"];
+        }
+      }
       if (err) {
         req.flash("error", "Not authorized.");
         res.redirect("/");
       } else if (wiki || result) {
-        if(wiki == null || wiki == false){
+        if (wiki == null || wiki == false) {
           var wiki = result;
         }
         wiki.body = markdown.toHTML(wiki.body);
         res.render("wikis/show", { wiki });
-      } 
+      }
     });
   },
   new(req, res, next) {
@@ -52,11 +52,11 @@ module.exports = {
       } else {
         let authorized;
         let authorizedResult;
-        if(wiki){
+        if (wiki) {
           authorized = new Authorizer(req.user, wiki).edit();
-        } else if(wiki == false || wiki == null){
-          wiki = result
-           authorizedResult = new Authorizer(req.user, wiki).edit()
+        } else if (wiki == false || wiki == null) {
+          wiki = result;
+          authorizedResult = new Authorizer(req.user, wiki).edit();
         }
         if (authorized || authorizedResult) {
           res.render("wikis/edit", { wiki, collaborators });
@@ -84,7 +84,7 @@ module.exports = {
       };
       wikiQueries.addWiki(newWiki, (err, wiki) => {
         if (err) {
-          req.flash("error", "Something went wrong")
+          req.flash("error", "Something went wrong");
           res.redirect(500, "wiki/new");
         } else {
           res.redirect(303, `/wikis/${wiki.id}`);

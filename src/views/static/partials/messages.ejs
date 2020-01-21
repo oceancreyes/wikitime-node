@@ -14,10 +14,10 @@
         <% messages.error.forEach((err) => { %>
           <li>
             <%  if(err.param == undefined || err.param == null){ %>
-            <%= `${err}` %>
-            <%  } else if (err.param && err.msg){ %>
-            <%= `${err.param} ${err.msg}` %>
-            <%   } %>
+              <%= `${err}` %>
+                <%  } else if (err.param && err.msg){ %>
+                  <%= `${err.param} ${err.msg}` %>
+                    <%   } %>
           </li>
           <% }) %>
       </ul>
