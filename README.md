@@ -9,6 +9,7 @@ WikiTime is an application that allows users to create, collaborate, and share w
 ---
 **STEPS**
 
+(configure the database permissions in the db/conig file first)
 1. npm install
 2. npm start
 3. go to localhost:3000
