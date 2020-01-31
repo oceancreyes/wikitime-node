@@ -14,8 +14,6 @@ WikiTime is an application that allows users to create, collaborate, and share w
 
 (add megasecret and cookieSecret in a .env file)
 
-()
-
 1. npm install
 2. run: sequelize db:migrate && sequelize db:migrate --env test
 3. npm start
