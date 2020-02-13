@@ -5,7 +5,8 @@ let users = [
     email: "faker0000@gmail.com",
     password: "00000faker",
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
+    role: 0
   }
 ];
 module.exports = {
