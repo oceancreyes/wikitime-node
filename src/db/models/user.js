@@ -4,12 +4,12 @@ module.exports = (sequelize, DataTypes) => {
     "User",
     {
       username: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         unique: true
       },
       email: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         unique: true,
         validate: {
@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
       password: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false
       },
       role: {
